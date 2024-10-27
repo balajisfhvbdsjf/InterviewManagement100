@@ -1,0 +1,39 @@
+﻿@model InterviewManagement.Application.DTOs.RegisterUserDto
+
+<div class="container mt-5">
+    <h2 class="text-center">Create an Account</h2>
+
+    <form method="post" class="mt-4">
+        <div class="form-group">
+            <label for="Name">Full Name</label>
+            <input type="text" class="form-control" id="Name" name="Name" required />
+        </div>
+
+        <div class="form-group">
+            <label for="Username">Username</label>
+            <input type="text" class="form-control" id="Username" name="Username" required />
+        </div>
+
+        <div class="form-group">
+            <label for="Email">Email</label>
+            <input type="email" class="form-control" id="Email" name="Email" required />
+        </div>
+
+        <div class="form-group">
+            <label for="Password">Password</label>
+            <input type="password" class="form-control" id="Password" name="Password" required />
+        </div>
+
+        <div class="form-group">
+            <label for="ConfirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block mt-4">Register</button>
+    </form>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mt-3">@TempData["Error"]</div>
+    }
+</div>
