@@ -26,20 +26,18 @@ namespace InterviewManagement.Web.Controllers
 
             if (result == null) // Registration successful
             {
-                TempData["Success"] = "Registration successful! Please log in.";
-                return RedirectToAction("Login");
+                return Json(new { success = true });
             }
 
-            TempData["Error"] = result;
-            return View(userDto);
+            return Json(new { success = false, message = result });
         }
+
 
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
@@ -47,22 +45,18 @@ namespace InterviewManagement.Web.Controllers
 
             if (token != null && !token.StartsWith("Invalid"))
             {
-                TempData["Success"] = "Login successful!";
-
-                // Store JWT token in a cookie (for session management)
                 Response.Cookies.Append("jwt", token, new CookieOptions
                 {
                     HttpOnly = true,
                     Expires = DateTime.Now.AddHours(1)
                 });
 
-                // Redirect to the Dashboard page upon successful login
-                return RedirectToAction("Dashboard");
+                return Json(new { success = true }); // Return success response
             }
 
-            TempData["Error"] = token;
-            return View(loginDto);
+            return Json(new { success = false, message = token ?? "Invalid credentials" }); // Return error response
         }
+
 
         public IActionResult Dashboard()
         {

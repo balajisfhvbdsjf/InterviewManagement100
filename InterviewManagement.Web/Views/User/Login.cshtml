@@ -1,32 +1,92 @@
 ﻿@model InterviewManagement.Application.DTOs.LoginDto
 
-<div class="container mt-5">
-    <h2 class="text-center">User Login</h2>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 400px;">
+        <h2 class="text-center mb-4">User Login</h2>
 
-    <form method="post" class="mt-4">
-        <div class="form-group">
-            <label for="Identifier">Email or Username</label>
-            <input type="text" class="form-control" id="Identifier" name="Identifier" required />
+        <form id="loginForm" method="post">
+            <div class="form-group">
+                <label for="Identifier">Email or Username</label>
+                <input type="text" class="form-control" id="Identifier" name="Identifier" required />
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="Password">Password</label>
+                <input type="password" class="form-control" id="Password" name="Password" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-4">Login</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <p>
+                Don't have an account?
+                <a href="@Url.Action("Register", "User")" class="text-primary">Create Account</a>
+            </p>
         </div>
-
-        <div class="form-group">
-            <label for="Password">Password</label>
-            <input type="password" class="form-control" id="Password" name="Password" required />
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block mt-4">Login</button>
-    </form>
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger mt-3">@TempData["Error"]</div>
-    }
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success mt-3">@TempData["Success"]</div>
-    }
-
-    <div class="text-center mt-3">
-        <p>Don't have an account? <a href="@Url.Action("Register", "User")">Create Account</a></p>
     </div>
 </div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage">Login successful! Redirecting to dashboard...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage">Invalid credentials! Please try again.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery and Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Handle form submission via AJAX
+        $('#loginForm').submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            $.ajax({
+                url: '@Url.Action("Login", "User")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#successModal').modal('show'); // Show success popup
+                        setTimeout(function() {
+                            window.location.href = '@Url.Action("Dashboard", "User")';
+                        }, 2000); // Redirect to dashboard after 2 seconds
+                    } else {
+                        $('#errorMessage').text(response.message);
+                        $('#errorModal').modal('show'); // Show error popup
+                    }
+                },
+                error: function() {
+                    $('#errorMessage').text('Something went wrong! Please try again.');
+                    $('#errorModal').modal('show'); // Show error popup
+                }
+            });
+        });
+    });
+</script>
